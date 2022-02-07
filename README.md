@@ -67,6 +67,7 @@ Options:
   -s, --silent                        Ignore any env-cmd errors and only fail on executed program failure.
   --use-shell                         Execute the command in a new shell with the given environment
   --verbose                           Print helpful debugging information
+  -i, --interpolate                   Interpolates {{var}} in args and command with environment variables
   -x, --expand-envs                   Replace $var in args and command with environment variables
   -h, --help                          output usage information
 ```
