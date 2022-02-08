@@ -31,9 +31,9 @@ function parseArgs(args) {
     if (program.expandEnvs === true) {
         expandEnvs = true;
     }
-    let interpolate = false;
+    let interpolateEnvs = false;
     if (program.interpolate === true) {
-        interpolate = true;
+        interpolateEnvs = true;
     }
     let verbose = false;
     if (program.verbose === true) {
@@ -68,7 +68,7 @@ function parseArgs(args) {
             silent,
             useShell,
             verbose,
-            interpolate,
+            interpolateEnvs,
         }
     };
     if (verbose) {

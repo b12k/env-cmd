@@ -58,7 +58,7 @@ async function EnvCmd({ command, commandArgs, envFile, rc, options = {} }) {
         commandArgs = commandArgs.map(arg => expand_envs_1.expandEnvs(arg, env));
     }
     if (options.interpolateEnvs === true) {
-        command = expand_envs_1.expandEnvs(command, env);
+        command = interpolate_envs_1.interpolateEnvs(command, env);
         commandArgs = commandArgs.map(arg => interpolate_envs_1.interpolateEnvs(arg, env));
     }
     // Execute the command with the given environment variables
