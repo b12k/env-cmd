@@ -2,6 +2,7 @@ import { default as spawn } from 'cross-spawn';
 import { TermSignals } from './signal-termination.js';
 import { getEnvVars } from './get-env-vars.js';
 import { expandEnvs } from './expand-envs.js';
+import { interpolateEnvs } from './interpolate-envs.js';
 import * as processLib from 'node:process';
 /**
  * The main env-cmd program. This will spawn a new process and run the given command using
@@ -39,6 +40,10 @@ export async function EnvCmd({ command, commandArgs, envFile, rc, options = {}, 
     if (options.expandEnvs === true) {
         command = expandEnvs(command, env);
         commandArgs = commandArgs.map(arg => expandEnvs(arg, env));
+    }
+    if (options.interpolateEnvs === true) {
+        command = interpolateEnvs(command, env);
+        commandArgs = commandArgs.map(arg => interpolateEnvs(arg, env));
     }
     if (!command) {
         throw new Error('env-cmd cannot be used as a standalone command. ' +

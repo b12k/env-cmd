@@ -2,6 +2,7 @@ import { default as sinon } from 'sinon'
 import { assert } from 'chai'
 import { default as esmock } from 'esmock'
 import { expandEnvs } from '../src/expand-envs.js'
+import { interpolateEnvs } from '../src/interpolate-envs.js'
 import type { EnvCmd } from '../src/env-cmd.ts'
 
 let envCmdLib: { EnvCmd: typeof EnvCmd }
@@ -11,6 +12,7 @@ describe('EnvCmd', (): void => {
   let getEnvVarsStub: sinon.SinonStub<any>
   let spawnStub: sinon.SinonStub<any>
   let expandEnvsSpy: sinon.SinonSpy<any>
+  let interpolateEnvsSpy: sinon.SinonSpy<any>
   before(async (): Promise<void> => {
     sandbox = sinon.createSandbox()
     getEnvVarsStub = sandbox.stub()
@@ -20,6 +22,7 @@ describe('EnvCmd', (): void => {
       kill: sinon.stub(),
     })
     expandEnvsSpy = sandbox.spy(expandEnvs)
+    interpolateEnvsSpy = sandbox.spy(interpolateEnvs)
 
     const TermSignals = sandbox.stub()
     TermSignals.prototype.handleTermSignals = sandbox.stub()
@@ -34,6 +37,9 @@ describe('EnvCmd', (): void => {
       },
       '../src/expand-envs': {
         expandEnvs: expandEnvsSpy,
+      },
+      '../src/interpolate-envs': {
+        interpolateEnvs: interpolateEnvsSpy,
       },
       '../src/signal-termination': {
         TermSignals,
@@ -165,6 +171,36 @@ describe('EnvCmd', (): void => {
       assert.equal(expandEnvsSpy.callCount, 3, 'command + number of args')
       assert.equal(spawnArgs[0], 'node')
       assert.sameOrderedMembers(spawnArgs[1] as string[], ['PONG', '\\$IP'])
+      assert.equal(spawnArgs[2].env.PING, 'PONG')
+    },
+  )
+
+  it('should spawn process with command and args interpolated if interpolateEnvs option is true',
+    async (): Promise<void> => {
+      getEnvVarsStub.returns({ PING: 'PONG', CMD: 'node' })
+      await envCmdLib.EnvCmd({
+        command: '{{CMD}}',
+        commandArgs: ['{{PING}}', '\\{{IP}}'],
+        envFile: {
+          filePath: './.env',
+          fallback: true,
+        },
+        rc: {
+          environments: ['dev'],
+          filePath: './.rc',
+        },
+        options: {
+          interpolateEnvs: true,
+        },
+      })
+
+      const spawnArgs = spawnStub.args[0]
+
+      assert.equal(getEnvVarsStub.callCount, 1, 'getEnvVars must be called once')
+      assert.equal(spawnStub.callCount, 1)
+      assert.equal(interpolateEnvsSpy.callCount, 3, 'command + number of args')
+      assert.equal(spawnArgs[0], 'node')
+      assert.sameOrderedMembers(spawnArgs[1] as string[], ['PONG', '\\{{IP}}'])
       assert.equal(spawnArgs[2].env.PING, 'PONG')
     },
   )

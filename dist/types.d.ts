@@ -4,6 +4,7 @@ export type RCEnvironment = Partial<Record<string, Environment>>;
 export type CommanderOptions = Command<[], {
     environments?: true | string[];
     expandEnvs?: boolean;
+    interpolate?: boolean;
     recursive?: boolean;
     fallback?: boolean;
     file?: true | string;
@@ -30,6 +31,7 @@ export interface EnvCmdOptions extends GetEnvVarOptions {
     commandArgs: string[];
     options?: {
         expandEnvs?: boolean;
+        interpolateEnvs?: boolean;
         recursive?: boolean;
         noOverride?: boolean;
         silent?: boolean;
