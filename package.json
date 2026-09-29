@@ -1,5 +1,5 @@
 {
-  "name": "env-cmd",
+  "name": "@b12k/env-cmd",
   "version": "11.0.0",
   "description": "Executes a command using the environment variables in an env file",
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/toddbluhm/env-cmd.git"
+    "url": "git+ssh://git@github.com/b12k/env-cmd.git"
   },
   "keywords": [
     "env",
@@ -43,13 +43,14 @@
     "Jon Scheiding <jonscheiding@gmail.com>",
     "Kyle Hensel <me@kyle.kiwi>",
     "Nicholas Krul <nicholas.krul@gmail.com>",
-    "serapath (Alexander Praetorius) <dev@serapath.de>"
+    "serapath (Alexander Praetorius) <dev@serapath.de>",
+    "Bogdan Kolesnyk <bogdan.kolesnyk@gmail.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/toddbluhm/env-cmd/issues"
+    "url": "https://github.com/b12k/env-cmd/issues"
   },
-  "homepage": "https://github.com/toddbluhm/env-cmd#readme",
+  "homepage": "https://github.com/b12k/env-cmd#readme",
   "dependencies": {
     "@commander-js/extra-typings": "^14.0.0",
     "commander": "^14.0.0",
@@ -92,6 +93,6 @@
     "tagFormat": "${version}"
   },
   "publishConfig": {
-    "provenance": true
+    "access": "public"
   }
 }
