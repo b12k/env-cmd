@@ -61,7 +61,7 @@ Options:
   -e, --environments [envs...]  The rc file environment(s) to use
   -f, --file [path]             Custom env file path or .rc file path if '-e' used (default path: ./.env or ./.env-cmdrc.(js|cjs|mjs|json))
   -x, --expand-envs             Replace $var and ${var} in args and command with environment variables
-  -i, --interpolate             Interpolates {{var}} in args and command with environment variables
+  -i, --interpolate             Interpolates {{var}} or {{var:-default}} in args and command with environment variables
   --recursive                   Replace $var and ${var} in env file with the referenced environment variable
   --fallback                    Fallback to default env file path, if custom env file path not found
   --no-override                 Do not override existing environment variables
@@ -190,6 +190,22 @@ or in `package.json`
   }
 }
 ```
+
+**Default values (bash-like)**
+
+If a variable is unset or empty, a default value can be provided with the `{{var:-default}}` syntax.
+Unlike plain `{{var}}`, which is left untouched when the variable is missing, `{{var:-default}}`
+always resolves: to the variable value when it is set and not empty, otherwise to the default value.
+
+**Terminal**
+
+```sh
+# falls back to http://localhost:3000 when $HOST is unset or empty
+./node_modules/.bin/env-cmd -i -- node index.js --url={{HOST:-http://localhost:3000}}
+```
+
+The default value may be empty (`{{var:-}}` resolves to an empty string) and can contain any
+characters except the closing `}}`.
 
 
 ### `--silent` suppresses env-cmd errors

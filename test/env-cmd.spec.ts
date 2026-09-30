@@ -180,7 +180,7 @@ describe('EnvCmd', (): void => {
       getEnvVarsStub.returns({ PING: 'PONG', CMD: 'node' })
       await envCmdLib.EnvCmd({
         command: '{{CMD}}',
-        commandArgs: ['{{PING}}', '\\{{IP}}'],
+        commandArgs: ['{{PING}}', '\\{{IP}}', '{{IP:-127.0.0.1}}'],
         envFile: {
           filePath: './.env',
           fallback: true,
@@ -198,9 +198,9 @@ describe('EnvCmd', (): void => {
 
       assert.equal(getEnvVarsStub.callCount, 1, 'getEnvVars must be called once')
       assert.equal(spawnStub.callCount, 1)
-      assert.equal(interpolateEnvsSpy.callCount, 3, 'command + number of args')
+      assert.equal(interpolateEnvsSpy.callCount, 4, 'command + number of args')
       assert.equal(spawnArgs[0], 'node')
-      assert.sameOrderedMembers(spawnArgs[1] as string[], ['PONG', '\\{{IP}}'])
+      assert.sameOrderedMembers(spawnArgs[1] as string[], ['PONG', '\\{{IP}}', '127.0.0.1'])
       assert.equal(spawnArgs[2].env.PING, 'PONG')
     },
   )
