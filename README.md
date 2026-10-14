@@ -20,6 +20,8 @@ A simple node program for executing commands using an environment from an env fi
 
 ## 💾 Install
 
+Requires Node.js >= 24.
+
 `npm install env-cmd` or `npm install -g env-cmd`
 
 ## ⌨️ Basic Usage
