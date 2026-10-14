@@ -1,9 +1,9 @@
-[![Linux Tests](https://github.com/toddbluhm/env-cmd/workflows/linux%20tests/badge.svg)](https://github.com/toddbluhm/env-cmd/actions?query=workflow%3A%22linux%20tests%22)
-[![Windows Tests](https://github.com/toddbluhm/env-cmd/workflows/windows%20tests/badge.svg)](https://github.com/toddbluhm/env-cmd/actions?query=workflow%3A%22windows%20tests%22)
-[![Coverage Status](https://badgen.net/coveralls/c/github/toddbluhm/env-cmd)](https://coveralls.io/github/toddbluhm/env-cmd?branch=master)
+[![Linux Tests](https://github.com/b12k/env-cmd/workflows/linux%20tests/badge.svg)](https://github.com/b12k/env-cmd/actions?query=workflow%3A%22linux%20tests%22)
+[![Windows Tests](https://github.com/b12k/env-cmd/workflows/windows%20tests/badge.svg)](https://github.com/b12k/env-cmd/actions?query=workflow%3A%22windows%20tests%22)
+[![Coverage Status](https://badgen.net/coveralls/c/github/b12k/env-cmd)](https://coveralls.io/github/b12k/env-cmd?branch=master)
 [![npm](https://badgen.net/npm/v/env-cmd)](https://www.npmjs.com/package/env-cmd)
 [![npm](https://badgen.net/npm/dm/env-cmd)](https://www.npmjs.com/package/env-cmd)
-[![License](https://badgen.net/github/license/toddbluhm/env-cmd)](https://github.com/toddbluhm/env-cmd/blob/master/LICENSE)
+[![License](https://badgen.net/github/license/b12k/env-cmd)](https://github.com/b12k/env-cmd/blob/master/LICENSE)
 [![Typescript-ESLint](https://badgen.net/badge/code%20style/typescript-eslint/blue?icon=typescript)](https://github.com/typescript-eslint/typescript-eslint)
 
 # env-cmd
