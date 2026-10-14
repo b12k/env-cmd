@@ -6,6 +6,14 @@
 [![License](https://badgen.net/github/license/b12k/env-cmd)](https://github.com/b12k/env-cmd/blob/master/LICENSE)
 [![Typescript-ESLint](https://badgen.net/badge/code%20style/typescript-eslint/blue?icon=typescript)](https://github.com/typescript-eslint/typescript-eslint)
 
+> **Note:** This is a fork of [toddbluhm/env-cmd](https://github.com/toddbluhm/env-cmd),
+> maintained by [@b12k](https://github.com/b12k).
+>
+> Fork additions over upstream:
+> - Moustache-style interpolation of `{{var}}` in command args (`-i` flag)
+> - Bash-like default values via `{{var:-default}}` syntax
+> - Dependencies updated to latest major versions
+
 # env-cmd
 
 A simple node program for executing commands using an environment from an env file.
