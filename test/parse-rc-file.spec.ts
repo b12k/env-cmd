@@ -8,7 +8,7 @@ describe('getRCFileVars', (): void => {
   it('should parse an .rc file with the given environment', async (): Promise<void> => {
     const res = await getRCFileVars({ environments: ['production'], filePath: rcFilePath })
     assert.exists(res)
-    assert.deepEqual(res, {
+    assert.deepEqual<unknown>(res, {
       THANKS: 'FOR WHAT?!',
       ANSWER: 42,
       ONLY: 'IN PRODUCTION',
@@ -19,7 +19,7 @@ describe('getRCFileVars', (): void => {
   it('should parse a .rc.json file', async (): Promise<void> => {
     const res = await getRCFileVars({ environments: ['test'], filePath: rcJSONFilePath })
     assert.exists(res)
-    assert.deepEqual(res, {
+    assert.deepEqual<unknown>(res, {
       THANKS: 'FOR MORE FISHIES',
       ANSWER: 21,
     })
@@ -63,7 +63,7 @@ describe('getRCFileVars', (): void => {
       environments: ['production'],
       filePath: './test/test-files/.rc-test-async.cjs',
     })
-    assert.deepEqual(env, {
+    assert.deepEqual<unknown>(env, {
       THANKS: 'FOR WHAT?!',
       ANSWER: 42,
       ONLY: 'IN PRODUCTION',
@@ -76,7 +76,7 @@ describe('getRCFileVars', (): void => {
       environments: ['production'],
       filePath: './test/test-files/.rc-test-async.mjs',
     })
-    assert.deepEqual(env, {
+    assert.deepEqual<unknown>(env, {
       THANKS: 'FOR WHAT?!',
       ANSWER: 42,
       ONLY: 'IN PRODUCTION',

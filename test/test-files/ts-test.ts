@@ -1,6 +1,4 @@
-import type { Environment } from '../../src/types.js';
-
-const env: Environment = {
+const env: unknown = {
   THANKS: 'FOR ALL THE FISH',
   ANSWER: 1,
 };

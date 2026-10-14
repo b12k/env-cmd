@@ -52,29 +52,29 @@
   },
   "homepage": "https://github.com/b12k/env-cmd#readme",
   "dependencies": {
-    "@commander-js/extra-typings": "^14.0.0",
-    "commander": "^14.0.0",
+    "@commander-js/extra-typings": "^15.0.0",
+    "commander": "^15.0.0",
     "cross-spawn": "^7.0.6"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.6.0",
-    "@commitlint/config-conventional": "^19.6.0",
-    "@eslint/js": "^9.16.0",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@eslint/js": "^10.0.1",
     "@types/chai": "^5.0.1",
     "@types/cross-spawn": "^6.0.6",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.0.10",
-    "@types/sinon": "^17.0.3",
-    "c8": "^10.1.2",
+    "@types/node": "^26.6.5",
+    "@types/sinon": "^22.0.0",
+    "c8": "^12.0.0",
     "chai": "^6.0.1",
     "coveralls": "^3.0.0",
     "esmock": "^2.6.9",
-    "globals": "^16.0.0",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
-    "mocha": "^11.0.0",
-    "sinon": "^21.0.0",
+    "mocha": "^12.0.3",
+    "sinon": "^22.1.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.15.0"
   },
   "commitlint": {
@@ -89,7 +89,9 @@
     ]
   },
   "release": {
-    "branches": ["master"],
+    "branches": [
+      "master"
+    ],
     "tagFormat": "${version}"
   },
   "publishConfig": {

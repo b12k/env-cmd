@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "lib": ["es2023"],
-    "module": "Node16",
+    "module": "nodenext",
     "moduleDetection": "force",
     "noEmit": true,
     "resolveJsonModule": true,
     "strict": true,
     "target": "ES2022",
+    "types": ["mocha", "node"],
   },
   "include": [
     "./**/*",

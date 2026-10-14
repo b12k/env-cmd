@@ -168,7 +168,7 @@ describe('signal-termination', (): void => {
       it('should terminate child process if parent process terminated', (): void => {
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.SignalsListener)('SIGTERM')
+        ;(processOnceStub.args[0][1] as (signal: NodeJS.Signals) => void)('SIGTERM')
         assert.equal(_removeProcessListenersStub.callCount, 1)
         assert.equal(procKillStub.callCount, 1)
         assert.equal(_terminateProcessStub.callCount, 1)
@@ -181,7 +181,7 @@ describe('signal-termination', (): void => {
         logInfoStub = sandbox.stub(console, 'info')
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.SignalsListener)('SIGTERM')
+        ;(processOnceStub.args[0][1] as (signal: NodeJS.Signals) => void)('SIGTERM')
         assert.equal(logInfoStub.callCount, 1)
       })
 
@@ -189,9 +189,9 @@ describe('signal-termination', (): void => {
         + 'has already been called by parent', (): void => {
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.SignalsListener)('SIGINT')
+        ;(processOnceStub.args[0][1] as (signal: NodeJS.Signals) => void)('SIGINT')
         assert.isOk(term._exitCalled)
-        ;(processOnceStub.args[0][1] as NodeJS.SignalsListener)('SIGTERM')
+        ;(processOnceStub.args[0][1] as (signal: NodeJS.Signals) => void)('SIGTERM')
         assert.equal(_removeProcessListenersStub.callCount, 2)
         assert.equal(procKillStub.callCount, 1)
         assert.equal(_terminateProcessStub.callCount, 1)
@@ -201,7 +201,7 @@ describe('signal-termination', (): void => {
       it('should convert and use number signal as code', (): void => {
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.ExitListener)(1)
+        ;(processOnceStub.args[0][1] as (code: number) => void)(1)
         assert.equal(_removeProcessListenersStub.callCount, 1)
         assert.equal(procKillStub.callCount, 1)
         assert.equal(procKillStub.args[0][0], 'SIGINT')
@@ -212,7 +212,7 @@ describe('signal-termination', (): void => {
       it('should not use default signal if code is 0', (): void => {
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.ExitListener)(0)
+        ;(processOnceStub.args[0][1] as (code: number) => void)(0)
         assert.equal(_removeProcessListenersStub.callCount, 1)
         assert.equal(procKillStub.callCount, 1)
         assert.equal(procKillStub.args[0], 0)
@@ -223,7 +223,7 @@ describe('signal-termination', (): void => {
       it('should use signal value and default SIGINT signal if code is undefined', (): void => {
         assert.notOk(term._exitCalled)
         term.handleTermSignals(proc)
-        ;(processOnceStub.args[0][1] as NodeJS.ExitListener)(4)
+        ;(processOnceStub.args[0][1] as (code: number) => void)(4)
         assert.equal(_removeProcessListenersStub.callCount, 1)
         assert.equal(procKillStub.callCount, 1)
         assert.equal(procKillStub.args[0][0], 'SIGINT')

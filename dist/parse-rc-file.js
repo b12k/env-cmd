@@ -21,7 +21,7 @@ export async function getRCFileVars({ environments, filePath }) {
     }
     // Get the file extension
     const ext = extname(absolutePath).toLowerCase();
-    let parsedData = {};
+    let parsedData;
     try {
         if (IMPORT_HOOK_EXTENSIONS.includes(ext)) {
             if (/tsx?$/.test(ext))

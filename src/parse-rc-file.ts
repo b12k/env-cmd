@@ -28,7 +28,7 @@ export async function getRCFileVars(
 
   // Get the file extension
   const ext = extname(absolutePath).toLowerCase()
-  let parsedData: Partial<RCEnvironment> = {}
+  let parsedData: Partial<RCEnvironment>
   try {
     if (IMPORT_HOOK_EXTENSIONS.includes(ext)) {
       if (/tsx?$/.test(ext)) checkIfTypescriptSupported()

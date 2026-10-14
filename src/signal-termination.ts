@@ -5,8 +5,8 @@ const SIGNALS_TO_HANDLE: NodeJS.Signals[] = [
 ]
 
 export class TermSignals {
-  private readonly terminateSpawnedProcessFuncHandlers: Record<string, NodeJS.SignalsListener> = {}
-  private terminateSpawnedProcessFuncExitHandler?: NodeJS.ExitListener
+  private readonly terminateSpawnedProcessFuncHandlers: Record<string, (signal: NodeJS.Signals | number) => void> = {}
+  private terminateSpawnedProcessFuncExitHandler?: (code: number | NodeJS.Signals) => void
   private readonly verbose: boolean = false
   public _exitCalled = false
 
