@@ -1,6 +1,8 @@
 name: release
 
-# Run action on every commit to main, release only when requested through commit annotation.
+# Publishes to npm on every push to master when package.json
+# holds a version that is not published yet.
+# Auth is tokenless via npm trusted publisher (OIDC), see package settings on npmjs.com.
 on:
   push:
     branches: [master]
@@ -43,7 +45,11 @@ jobs:
       run: npm run test
     
     - name: Publish to NPM
-      uses: JS-DevTools/npm-publish@v3
-      with:
-        token: ${{ secrets.NPM_TOKEN }}
-        provenance: true
+      run: |
+        PKG_NAME=$(node -p "require('./package.json').name")
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        if npm view "$PKG_NAME@$PKG_VERSION" version 2>/dev/null; then
+          echo "$PKG_NAME@$PKG_VERSION already published, skipping."
+        else
+          npm publish --provenance
+        fi

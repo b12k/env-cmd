@@ -88,12 +88,6 @@
       "lcov"
     ]
   },
-  "release": {
-    "branches": [
-      "master"
-    ],
-    "tagFormat": "${version}"
-  },
   "publishConfig": {
     "access": "public"
   }
