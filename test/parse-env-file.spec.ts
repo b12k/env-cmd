@@ -1,8 +1,8 @@
 import { assert } from 'chai'
 import {
   stripEmptyLines, stripComments, parseEnvVars,
-  parseEnvString, getEnvFileVars
-} from '../src/parse-env-file'
+  parseEnvString, getEnvFileVars,
+} from '../src/parse-env-file.js'
 
 describe('stripEmptyLines', (): void => {
   it('should strip out all empty lines', (): void => {
@@ -16,14 +16,21 @@ describe('stripComments', (): void => {
     const envString = stripComments('#BOB=COOL\nNODE_ENV=dev\nANSWER=42 AND COUNTING\n#AnotherComment\n')
     assert(envString === '\nNODE_ENV=dev\nANSWER=42 AND COUNTING\n\n')
   })
+
+  it('should not strip out #s from values', (): void => {
+    const envString = stripComments('#\nBOB=COMMENT#ELL\n#\nNODE_ENV=dev\nANSWER=42 AND COUNTING\n#AnotherComment\n')
+    assert(envString === '\nBOB=COMMENT#ELL\n\nNODE_ENV=dev\nANSWER=42 AND COUNTING\n\n', envString)
+  })
 })
 
 describe('parseEnvVars', (): void => {
   it('should parse out all env vars in string when not ending with \'\\n\'', (): void => {
-    const envVars = parseEnvVars('BOB=COOL\nNODE_ENV=dev\nANSWER=42 AND COUNTING')
+    const envVars = parseEnvVars('BOB=COOL\nNODE_ENV=dev\nANSWER=42 AND COUNTING\nNUMBER=42\nBOOLEAN=true')
     assert(envVars.BOB === 'COOL')
     assert(envVars.NODE_ENV === 'dev')
     assert(envVars.ANSWER === '42 AND COUNTING')
+    assert(envVars.NUMBER === '42')
+    assert(envVars.BOOLEAN === 'true')
   })
 
   it('should parse out all env vars in string with format \'key=value\'', (): void => {
@@ -89,6 +96,36 @@ describe('parseEnvVars', (): void => {
     assert(envVars.NODE_ENV === 'dev')
     assert(envVars.ANSWER === ' 42 AND COUNTING')
   })
+
+  describe('value', () => {
+    const testCases = [
+      [`a`, `a`],
+      [`'a'`, `a`],
+      [`"a"`, `a`],
+      [`"a"`, `a`],
+      [`"single 'quotes' inside double"`, `single 'quotes' inside double`],
+      [`'double "quotes" inside single'`, `double "quotes" inside single`],
+      [`a # comment without quotes`, `a`],
+      [`'a' # comment with single quotes`, `a`],
+      [`"a" # comment with double quotes`, `a`],
+      [`"a"garbage after final quote`, `a`],
+      [
+        `"double quotes " within double quotes"`,
+        `double quotes " within double quotes`,
+      ],
+      [
+        `'single quotes ' within single quotes'`,
+        `single quotes ' within single quotes`,
+      ],
+      [`line\\nbreaks`, `line\nbreaks`],
+      [`"line\\n\\nbreaks in quotes"`, `line\n\nbreaks in quotes`],
+    ];
+    for (const [input, output] of testCases) {
+      it(`should parse ${input}`, () => {
+        assert.equal(parseEnvVars(`KEY=${input}`).KEY, output)
+      })
+    }
+  })
 })
 
 describe('parseEnvString', (): void => {
@@ -105,9 +142,10 @@ describe('getEnvFileVars', (): void => {
     const env = await getEnvFileVars('./test/test-files/test.json')
     assert.deepEqual(env, {
       THANKS: 'FOR WHAT?!',
-      ANSWER: 42,
+      ANSWER: '42',
       ONLY: 'IN PRODUCTION',
-      GALAXY: 'hitch\nhiking'
+      GALAXY: 'hitch\nhiking',
+      BRINGATOWEL: 'true',
     })
   })
 
@@ -115,27 +153,71 @@ describe('getEnvFileVars', (): void => {
     const env = await getEnvFileVars('./test/test-files/test-newlines.json')
     assert.deepEqual(env, {
       THANKS: 'FOR WHAT?!',
-      ANSWER: 42,
+      ANSWER: '42',
       ONLY: 'IN\n PRODUCTION',
-      GALAXY: 'hitch\nhiking\n\n'
+      GALAXY: 'hitch\nhiking\n\n',
+      BRINGATOWEL: 'true',
     })
   })
 
-  it('should parse a js file', async (): Promise<void> => {
-    const env = await getEnvFileVars('./test/test-files/test.js')
+  it('should parse a js/cjs file', async (): Promise<void> => {
+    const env = await getEnvFileVars('./test/test-files/test.cjs')
     assert.deepEqual(env, {
       THANKS: 'FOR ALL THE FISH',
-      ANSWER: 0,
-      GALAXY: 'hitch\nhiking'
+      ANSWER: '0',
+      GALAXY: 'hitch\nhiking',
     })
   })
 
-  it('should parse an async js file', async (): Promise<void> => {
-    const env = await getEnvFileVars('./test/test-files/test-async.js')
+  it('should parse an async js/cjs file', async (): Promise<void> => {
+    const env = await getEnvFileVars('./test/test-files/test-async.cjs')
     assert.deepEqual(env, {
       THANKS: 'FOR ALL THE FISH',
-      ANSWER: 0
+      ANSWER: '0',
     })
+  })
+
+  it('should parse a mjs file', async (): Promise<void> => {
+    const env = await getEnvFileVars('./test/test-files/test.mjs')
+    assert.deepEqual(env, {
+      THANKS: 'FOR ALL THE FISH',
+      ANSWER: '0',
+      GALAXY: 'hitch\nhiking',
+    })
+  })
+
+  it('should parse an async mjs file', async (): Promise<void> => {
+    const env = await getEnvFileVars('./test/test-files/test-async.mjs')
+    assert.deepEqual(env, {
+      THANKS: 'FOR ALL THE FISH',
+      ANSWER: '0',
+    })
+  });
+
+  (process.features.typescript ? describe : describe.skip)('TS', () => {
+    it('should parse a .ts file', async () => {
+      const env = await getEnvFileVars('./test/test-files/ts-test.ts');
+      assert.deepEqual(env, {
+        THANKS: 'FOR ALL THE FISH',
+        ANSWER: '1',
+      });
+    });
+
+    it('should parse a .cts file', async () => {
+      const env = await getEnvFileVars('./test/test-files/cts-test.cts');
+      assert.deepEqual(env, {
+        THANKS: 'FOR ALL THE FISH',
+        ANSWER: '0',
+      });
+    });
+
+    it('should parse a .tsx file', async () => {
+      const env = await getEnvFileVars('./test/test-files/tsx-test.tsx');
+      assert.deepEqual(env, {
+        THANKS: 'FOR ALL THE FISH',
+        ANSWER: '2',
+      });
+    });
   })
 
   it('should parse an env file', async (): Promise<void> => {
@@ -144,7 +226,16 @@ describe('getEnvFileVars', (): void => {
       THANKS: 'FOR WHAT?!',
       ANSWER: '42',
       ONLY: 'IN=PRODUCTION',
-      GALAXY: 'hitch\nhiking'
+      GALAXY: 'hitch\nhiking',
+      BRINGATOWEL: 'true',
+      a: '1',
+      b: '2',
+      c: '3',
+      d: "=",
+      e: "equals symbol = = ",
+      json_no_quotes: "{\"foo\": \"bar\"}",
+      json_with_quotes: "{\"foo\": \"bar\"}",
+      quotes: "hello \n\n \" 'escaped \\tsingle quote' \" #cool #fun ",
     })
   })
 
@@ -152,8 +243,22 @@ describe('getEnvFileVars', (): void => {
     try {
       await getEnvFileVars('./test/test-files/non-existent-file')
       assert.fail('Should not get here!')
-    } catch (e) {
+    }
+    catch (e) {
+      assert.instanceOf(e, Error)
       assert.match(e.message, /file path/gi)
     }
   })
+
+  for (const fileExt of ['cjs', 'mjs', 'json']) {
+    it(`should throw an error when importing a ${fileExt} file with an invalid export`, async () => {
+      try {
+        await getEnvFileVars(`./test/test-files/invalid.${fileExt}`)
+        assert.fail('Should not get here!')
+      } catch (e) {
+        assert.instanceOf(e, Error)
+        assert.match(e.message, /does not export an object/gi)
+      }
+    })
+  }
 })

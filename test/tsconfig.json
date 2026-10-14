@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "moduleDetection": "force",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["mocha", "node"],
+  },
+  "include": [
+    "./**/*",
+    "./test-files/.rc-test-async.cjs",
+    "./test-files/.rc-test-async.mjs",
+  ]
+}

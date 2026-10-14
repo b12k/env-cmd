@@ -1,14 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.interpolateEnvs = void 0;
 /**
- * interpolateEnvs Replaces {{var}} in args and command with environment variables
- * the environment variable doesn't exist, it leaves it as is.
+ * interpolateEnvs Replaces {{var}} and {{var:-default}} in args and command with environment variables
+ * if the environment variable doesn't exist, it leaves it as is unless a default value is provided.
 */
-function interpolateEnvs(str, envs) {
-    return str.replace(/(?<!\\){{[a-zA-Z0-9_]+}}/g, varName => {
-        const varValue = envs[varName.replace(/{|}/g, '')];
-        return varValue !== undefined ? varValue : varName;
+export function interpolateEnvs(str, envs) {
+    return str.replace(/(?<!\\){{([a-zA-Z0-9_]+)(?::-([^}]*))?}}/g, (varName, name, defaultValue) => {
+        const varValue = envs[name];
+        if (defaultValue === undefined) {
+            return varValue ?? varName;
+        }
+        if (varValue !== undefined && varValue !== '') {
+            return varValue;
+        }
+        return defaultValue;
     });
 }
-exports.interpolateEnvs = interpolateEnvs;

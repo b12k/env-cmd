@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "target": "es2017",
-    "module": "commonjs",
-    "resolveJsonModule": true,
-    "strict": true,
     "declaration": true,
-    "lib": [
-      "es2018",
-      "es2019",
-      "es2020"
-    ]
+    "esModuleInterop": true,
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "moduleDetection": "force",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "rootDir": "src"
   },
   "include": [
-    "./src/**/*"
+    "src/**/*"
   ]
 }

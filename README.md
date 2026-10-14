@@ -1,17 +1,26 @@
-[![Linux Tests](https://github.com/toddbluhm/env-cmd/workflows/linux%20tests/badge.svg)](https://github.com/toddbluhm/env-cmd/actions?query=workflow%3A%22linux%20tests%22)
-[![Windows Tests](https://github.com/toddbluhm/env-cmd/workflows/windows%20tests/badge.svg)](https://github.com/toddbluhm/env-cmd/actions?query=workflow%3A%22windows%20tests%22)
-[![Coverage Status](https://badgen.net/coveralls/c/github/toddbluhm/env-cmd)](https://coveralls.io/github/toddbluhm/env-cmd?branch=master)
+[![Linux Tests](https://github.com/b12k/env-cmd/workflows/linux%20tests/badge.svg)](https://github.com/b12k/env-cmd/actions?query=workflow%3A%22linux%20tests%22)
+[![Windows Tests](https://github.com/b12k/env-cmd/workflows/windows%20tests/badge.svg)](https://github.com/b12k/env-cmd/actions?query=workflow%3A%22windows%20tests%22)
+[![Coverage Status](https://badgen.net/coveralls/c/github/b12k/env-cmd)](https://coveralls.io/github/b12k/env-cmd?branch=master)
 [![npm](https://badgen.net/npm/v/env-cmd)](https://www.npmjs.com/package/env-cmd)
 [![npm](https://badgen.net/npm/dm/env-cmd)](https://www.npmjs.com/package/env-cmd)
-[![License](https://badgen.net/github/license/toddbluhm/env-cmd)](https://github.com/toddbluhm/env-cmd/blob/master/LICENSE)
-[![TS-Standard - Typescript Standard Style Guide](https://badgen.net/badge/code%20style/ts-standard/blue?icon=typescript)](https://github.com/toddbluhm/ts-standard)
-[![Dependabot badge](https://badgen.net/dependabot/toddbluhm/env-cmd?icon=dependabot)](https://dependabot.com/)
+[![License](https://badgen.net/github/license/b12k/env-cmd)](https://github.com/b12k/env-cmd/blob/master/LICENSE)
+[![Typescript-ESLint](https://badgen.net/badge/code%20style/typescript-eslint/blue?icon=typescript)](https://github.com/typescript-eslint/typescript-eslint)
+
+> **Note:** This is a fork of [toddbluhm/env-cmd](https://github.com/toddbluhm/env-cmd),
+> maintained by [@b12k](https://github.com/b12k).
+>
+> Fork additions over upstream:
+> - Moustache-style interpolation of `{{var}}` in command args (`-i` flag)
+> - Bash-like default values via `{{var:-default}}` syntax
+> - Dependencies updated to latest major versions
 
 # env-cmd
 
 A simple node program for executing commands using an environment from an env file.
 
 ## 💾 Install
+
+Requires Node.js >= 24.
 
 `npm install env-cmd` or `npm install -g env-cmd`
 
@@ -31,7 +40,7 @@ ENV3=THE FISH
 ```json
 {
   "scripts": {
-    "test": "env-cmd mocha -R spec"
+    "test": "env-cmd -- mocha -R spec"
   }
 }
 ```
@@ -39,7 +48,7 @@ ENV3=THE FISH
 **Terminal**
 
 ```sh
-./node_modules/.bin/env-cmd node index.js
+./node_modules/.bin/env-cmd -- node index.js
 ```
 
 ### Using custom env file path
@@ -49,27 +58,28 @@ To use a custom env filename or path, pass the `-f` flag. This is a major breaki
 **Terminal**
 
 ```sh
-./node_modules/.bin/env-cmd -f ./custom/path/.env node index.js
+./node_modules/.bin/env-cmd -f ./custom/path/.env -- node index.js
 ```
 
 ## 📜 Help
 
 ```text
-Usage: _ [options] <command> [...args]
+Usage: env-cmd [options] -- <command> [...args]
 
 Options:
-  -v, --version                       output the version number
-  -e, --environments [env1,env2,...]  The rc file environment(s) to use
-  -f, --file [path]                   Custom env file path (default path: ./.env)
-  --fallback                          Fallback to default env file path, if custom env file path not found
-  -n, --no-override                   Do not override existing environment variables
-  -r, --rc-file [path]                Custom rc file path (default path: ./.env-cmdrc(|.js|.json)
-  -s, --silent                        Ignore any env-cmd errors and only fail on executed program failure.
-  --use-shell                         Execute the command in a new shell with the given environment
-  --verbose                           Print helpful debugging information
-  -i, --interpolate                   Interpolates {{var}} in args and command with environment variables
-  -x, --expand-envs                   Replace $var in args and command with environment variables
-  -h, --help                          output usage information
+  -v, --version                 output the version number
+  -e, --environments [envs...]  The rc file environment(s) to use
+  -f, --file [path]             Custom env file path or .rc file path if '-e' used (default path: ./.env or ./.env-cmdrc.(js|cjs|mjs|json))
+  -x, --expand-envs             Replace $var and ${var} in args and command with environment variables
+  -i, --interpolate             Interpolates {{var}} or {{var:-default}} in args and command with environment variables
+  --recursive                   Replace $var and ${var} in env file with the referenced environment variable
+  --fallback                    Fallback to default env file path, if custom env file path not found
+  --no-override                 Do not override existing environment variables
+  --silent                      Ignore any env-cmd errors and only fail on executed program failure.
+  --use-shell                   Execute the command in a new shell with the given environment
+  --verbose                     Print helpful debugging information
+  -h, --help                    display help for command
+
 ```
 
 ## 🔬 Advanced Usage
@@ -103,10 +113,10 @@ are found.
 **Terminal**
 
 ```sh
-./node_modules/.bin/env-cmd -e production node index.js
+./node_modules/.bin/env-cmd -e production -- node index.js
 # Or for multiple environments (where `production` vars override `test` vars,
 # but both are included)
-./node_modules/.bin/env-cmd -e test,production node index.js
+./node_modules/.bin/env-cmd -e test,production -- node index.js
 ```
 
 ### `--no-override` option
@@ -127,20 +137,20 @@ commands together that share the same environment variables.
 **Terminal**
 
 ```sh
-./node_modules/.bin/env-cmd -f ./test/.env --use-shell "npm run lint && npm test"
+./node_modules/.bin/env-cmd -f ./test/.env --use-shell -- "npm run lint && npm test"
 ```
 
 ### Asynchronous env file support
-   
+
    EnvCmd supports reading from asynchronous `.env` files. Instead of using a `.env` file, pass in a `.js`
    file that exports either an object or a `Promise` resolving to an object (`{ ENV_VAR_NAME: value, ... }`). Asynchronous `.rc`
    files are also supported using `.js` file extension and resolving to an object with top level environment
    names (`{ production: { ENV_VAR_NAME: value, ... } }`).
-   
+
    **Terminal**
-   
+
    ```sh
-   ./node_modules/.bin/env-cmd -f ./async-file.js node index.js
+   ./node_modules/.bin/env-cmd -f ./async-file.js -- node index.js
    ```
 
 ### `-x` expands vars in arguments
@@ -154,21 +164,22 @@ to provide arguments to a command that are based on environment variable values 
 
 ```sh
 # $VAR will be expanded into the env value it contains at runtime
-./node_modules/.bin/env-cmd -x node index.js --arg=\$VAR
+./node_modules/.bin/env-cmd -x -- node index.js --arg=\$VAR
 ```
 
 or in `package.json` (use `\\` to insert a literal backslash)
 ```json
 {
   "script": {
-    "start": "env-cmd -x node index.js --arg=\\$VAR"
+    "start": "env-cmd -x -- node index.js --arg=\\$VAR"
   }
 }
 ```
 
-### `-i` interpolate vars in arguments
 
-EnvCmd supports interpolation `{{var}}` values passed in as arguments to the command. The allows a user
+### `-i` interpolates vars in arguments
+
+EnvCmd supports interpolating `{{var}}` values passed in as arguments to the command. This allows a user
 to provide arguments using "moustache" syntax to a command that are based on environment variable values at runtime.
 
 **NOTE:** Main difference between `-i` and `-x` is that you do not need to escape the `{{` & `}}` characters with `\`
@@ -177,18 +188,34 @@ unlike using `$` in order to avoid terminal trying to auto expand it before pass
 **Terminal**
 
 ```sh
-# $VAR will be expanded into the env value it contains at runtime
-./node_modules/.bin/env-cmd -x node index.js --arg={{VAR}}
+# {{VAR}} will be interpolated into the env value it contains at runtime
+./node_modules/.bin/env-cmd -i -- node index.js --arg={{VAR}}
 ```
 
 or in `package.json`
 ```json
 {
   "script": {
-    "start": "env-cmd -x node index.js --arg={{VAR}}"
+    "start": "env-cmd -i -- node index.js --arg={{VAR}}"
   }
 }
 ```
+
+**Default values (bash-like)**
+
+If a variable is unset or empty, a default value can be provided with the `{{var:-default}}` syntax.
+Unlike plain `{{var}}`, which is left untouched when the variable is missing, `{{var:-default}}`
+always resolves: to the variable value when it is set and not empty, otherwise to the default value.
+
+**Terminal**
+
+```sh
+# falls back to http://localhost:3000 when $HOST is unset or empty
+./node_modules/.bin/env-cmd -i -- node index.js --url={{HOST:-http://localhost:3000}}
+```
+
+The default value may be empty (`{{var:-}}` resolves to an empty string) and can contain any
+characters except the closing `}}`.
 
 
 ### `--silent` suppresses env-cmd errors
@@ -278,11 +305,6 @@ usually just easier to have a file with all the vars in them, especially for dev
 ## 🧬 Related Projects
 
 [`cross-env`](https://github.com/kentcdodds/cross-env) - Cross platform setting of environment scripts
-
-## 🎊 Special Thanks
-
-Special thanks to [`cross-env`](https://github.com/kentcdodds/cross-env) for inspiration (uses the
-same `cross-spawn` lib underneath too).
 
 ## 📋 Contributing Guide
 
